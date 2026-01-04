@@ -27,6 +27,13 @@ If you have a working Go toolchain (i.e. `GOBIN` is in your path), you can insta
 go install github.com/Nouveau-Printemps/pds-to-ldap@latest
 ```
 
+## Usage
+
+Arguments:
+- `--pds <string>` is the address of the PDS, you can use the env `PDS_LDAP__TARGET_PDS` to set it
+- `--user-agent <string>` is the `User-Agent` to use, you can use the env `PDS_LDAP__USER_AGENT` to set it
+- `--timeout <int>` is the time (in seconds) before *one* request fails.
+
 ## How?
 
 When you run the command, it will fetch every user from the PDS and it will check if the corresponding `did:plc` has an

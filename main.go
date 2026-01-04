@@ -4,12 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"os"
-	"time"
-
-	"github.com/bluesky-social/indigo/api/atproto"
-	"github.com/bluesky-social/indigo/atproto/atclient"
 )
 
 var (
@@ -33,37 +28,12 @@ func init() {
 
 func main() {
 	flag.Parse()
-	client := atclient.NewAPIClient(pds)
-	client.Headers.Set("User-Agent", userAgent)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	cursor := ""
-	var limit int64 = 50
-	fr := true
-	for len(cursor) > 0 || fr {
-		fr = false
-
-		ctx, cancel := context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
-		defer cancel()
-
-		resp, err := atproto.SyncListRepos(ctx, client, cursor, limit)
-		if err != nil {
-			panic(err)
-		}
-		for _, r := range resp.Repos {
-			b, err := json.Marshal(r)
-			if err != nil {
-				panic(err)
-			}
-			fmt.Println(string(b))
-		}
-
-		if resp.Cursor == nil {
-			cursor = ""
-		} else {
-			cursor = *resp.Cursor
-		}
-	}
+	sPDS := NewSyncPDS(pds, userAgent)
+	repos := sPDS.GetRepos(ctx)
+	b, _ := json.Marshal(repos)
+	println(string(b))
 }
